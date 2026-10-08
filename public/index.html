@@ -141,7 +141,7 @@
   }
 
 </style>
-</head>
+<style>.hidden{display:none !important} .view{scroll-margin-top:12px}</style></head>
 <body>
   <header class="top">
     <div class="wrap nav">
@@ -189,7 +189,7 @@
           <aside class="hero-card">
             <p class="kicker">ตัวอย่างที่คนถามบ่อย</p>
             <ul class="mini" id="heroList"></ul>
-            <p class="statline" id="statline">กำลังโหลดข้อมูลจากชีต…</p>
+            <p class="statline" id="statline">กำลังโหลดข้อมูล…</p>
           </aside>
         </div>
       </div>
@@ -578,7 +578,9 @@ var google = { script: { run: (function () {
 
   function show(id) {
     document.querySelectorAll('.view').forEach(function (v) {
-      v.classList.toggle('hidden', v.id !== id);
+      var on = v.id === id;
+      v.classList.toggle('hidden', !on);
+      v.style.display = on ? '' : 'none';
     });
     document.querySelectorAll('nav a').forEach(function (a) {
       a.classList.toggle('active', a.getAttribute('data-go') === id);
