@@ -164,6 +164,8 @@
         <a href="#peers" data-go="peers">รายการคนอื่น</a>
         <a href="#providers" data-go="providers">ร้านที่ราคาชัด</a>
         <a href="#method" data-go="method">วิธีอ่านตัวเลข</a>
+        <a href="#earn" data-go="earn">บริการเสริม</a>
+        <a href="#legal" data-go="legal">ข้อจำกัดความรับผิด</a>
         <a href="#contact" data-go="contact">ติดต่อ</a>
         <a href="#admin" data-go="admin">แอดมิน</a>
       </nav>
@@ -179,7 +181,7 @@
             <h1>เช็คว่าราคานี้<br>อยู่ในช่วงที่คนจ่ายจริงหรือเปล่า</h1>
             <p class="lede">ล้างแอร์ ทาสี ต่อเติมครัว งานศพ ผ่าตัดเล็ก ไม่มีป้ายราคา เว็บนี้รวมช่วงตลาดปี 2568–2569 กับรายงานที่แอดมินตรวจแล้ว เพื่อเทียบงานที่ใกล้เคียงกัน</p>
             <div class="chips">
-              <span>ไม่ตัดสินว่าใครโกง</span>
+              <span>เป็นข้อมูลอ้างอิง ไม่ได้ตัดสินความถูกผิด</span>
               <span>รายงานใหม่ต้องผ่านตรวจ</span>
               <span>เทียบตามโซน</span>
             </div>
@@ -336,7 +338,7 @@
     <section id="check" class="view">
       <div class="wrap narrow">
         <h2>เช็คใบเสนอราคา</h2>
-        <p class="sub">ใส่ราคาที่ช่างเสนอ ระบบเทียบกับค่ากลางของช่วงอ้างอิง แล้วบอกว่าควรถามอะไรเพิ่ม ไม่ได้บอกว่าโดนโกง</p>
+        <p class="sub">ใส่ราคาที่ช่างเสนอ ระบบเทียบกับค่ากลางของช่วงอ้างอิง แล้วบอกว่าควรถามอะไรเพิ่ม ไม่ได้สรุปว่าราคาใดไม่เหมาะสม</p>
         <form id="checkForm" class="panel">
           <label>ค้นหมวด<input id="cCatSearch" placeholder="พิมพ์หาหมวด"></label>
           <label>หมวด<select id="cCat" required></select></label>
@@ -540,10 +542,60 @@
     </section>
   </main>
 
+  
+    <section id="earn" class="view">
+      <div class="wrap">
+        <h2>บริการเสริม</h2>
+        <p class="fine">ส่วนนี้เป็นบริการแยกจากช่วงราคา รายการที่เสียค่าใช้จ่ายจะป้ายว่าเป็นบริการหรือโฆษณา และไม่ทำให้ช่วงราคาเปลี่ยน</p>
+        <div class="pain">
+          <article>
+            <h3>อ่านใบเสนอราคาแบบละเอียด</h3>
+            <p>149 บาทต่อใบ ส่งไฟล์หรือข้อความใบเสนอ แล้วได้รายการที่ควรสอบถามเพิ่ม ยังไม่ใช่ความเห็นทางกฎหมาย</p>
+          </article>
+          <article>
+            <h3>พื้นที่แนะนำผู้ให้บริการ</h3>
+            <p>990 บาทต่อเดือน แสดงเป็นโฆษณาเท่านั้น ไม่ได้หมายความว่าราคาเหมาะสมที่สุด และไม่เรียงเหนือข้อมูลอ้างอิง</p>
+          </article>
+          <article>
+            <h3>รายงานภาพรวมรายไตรมาส</h3>
+            <p>2,900 บาทต่อชุด สำหรับธุรกิจที่ต้องการช่วงราคาตามหมวดและพื้นที่ เป็นข้อมูลรวม ไม่เปิดข้อมูลรายบุคคล</p>
+          </article>
+        </div>
+        <form id="orderForm" class="form">
+          <label>บริการ<select id="oKind"><option value="quote">อ่านใบเสนอราคา 149 บาท</option><option value="listing">พื้นที่แนะนำ 990 บาท/เดือน</option><option value="report">รายงานภาพรวม 2,900 บาท</option></select></label>
+          <label>ชื่อ<input id="oName" required></label>
+          <label>อีเมล<input id="oEmail" type="email" required></label>
+          <label>โทร<input id="oPhone"></label>
+          <label>รายละเอียด<textarea id="oDetail" required placeholder="หมวดงาน พื้นที่ และสิ่งที่ต้องการ"></textarea></label>
+          <button class="btn" type="submit">ส่งคำขอ</button>
+          <p id="orderMsg" class="fine"></p>
+        </form>
+      </div>
+    </section>
+    <section id="legal" class="view">
+      <div class="wrap">
+        <h2>ข้อจำกัดความรับผิด</h2>
+        <div class="alert">เรคาจินแสดงช่วงราคาจากข้อมูลอ้างอิงและรายงานที่ได้รับ ไม่ได้ระบุชื่อผู้ให้บริการว่าเรียกเก็บไม่เหมาะสม และไม่ได้เป็นคำตัดสินว่าใบเสนอราคาใดผิดกฎหมาย</div>
+        <article class="provider">
+          <p>ราคาที่สูงหรือต่ำกว่าช่วงอาจเกิดจากวัสดุ ขอบเขตงาน สถานที่ ความยาก และการรับประกัน ผู้ใช้ควรตรวจสอบกับผู้เสนอราคาโดยตรง</p>
+          <p>ห้ามส่งรายงานที่ระบุชื่อบุคคลหรือร้านเพื่อกล่าวหา รายการที่มีข้อความลักษณะนั้นจะไม่ถูกเผยแพร่</p>
+          <p>ผู้ให้บริการที่เห็นข้อมูลคลาดเคลื่อน สามารถขอทบทวนได้ที่แบบฟอร์มด้านล่าง โดยไม่ถือว่าเว็บรับรองข้อเท็จจริงตามคำขอ</p>
+        </article>
+        <h3>ขอทบทวนข้อมูล</h3>
+        <form id="disputeForm" class="form">
+          <label>ชื่อ<input id="dName" required></label>
+          <label>อีเมล<input id="dEmail" type="email" required></label>
+          <label>รายละเอียดที่ต้องการให้ทบทวน<textarea id="dMsg" required></textarea></label>
+          <button class="btn" type="submit">ส่งคำขอทบทวน</button>
+          <p id="disputeMsg" class="fine"></p>
+        </form>
+      </div>
+    </section>
+
   <footer>
     <div class="wrap">
       <strong>Rekajin</strong>
-      <p class="alert">คำเตือน: ตัวเลขนี้ไม่ใช่ราคากลางราชการ และไม่ใช่คำแนะนำทางการแพทย์หรือกฎหมาย การผ่าตัดและงานศพต้องยืนยันกับโรงพยาบาลหรือวัดโดยตรง งานศพยืนยันกับวัดอีกครั้ง</p>
+      <p class="alert">ตัวเลขเป็นข้อมูลอ้างอิง ไม่ใช่ราคากลางราชการ ไม่ใช่คำตัดสินว่าผู้ใดเรียกเก็บไม่เหมาะสม และไม่ใช่คำแนะนำทางการแพทย์หรือกฎหมาย ผู้ให้บริการขอทบทวนข้อมูลได้ที่หน้าข้อจำกัดความรับผิด</p>
     </div>
   </footer>
   
@@ -890,6 +942,34 @@ var google = { script: { run: (function () {
       name: document.getElementById('ctName').value,
       email: document.getElementById('ctMail').value,
       message: document.getElementById('ctMsg').value
+    });
+  };
+
+  
+  document.getElementById('orderForm').onsubmit = function (e) {
+    e.preventDefault();
+    google.script.run.withSuccessHandler(function (res) {
+      document.getElementById('orderMsg').textContent = 'รับคำขอ ' + res.id + ' แล้ว จำนวน ' + res.amount + ' บาท ติดต่อยืนยันที่ ' + res.email;
+    }).withFailureHandler(function (err) {
+      document.getElementById('orderMsg').textContent = err.message;
+    }).submitOrder({
+      kind: document.getElementById('oKind').value,
+      name: document.getElementById('oName').value,
+      email: document.getElementById('oEmail').value,
+      phone: document.getElementById('oPhone').value,
+      detail: document.getElementById('oDetail').value
+    });
+  };
+  document.getElementById('disputeForm').onsubmit = function (e) {
+    e.preventDefault();
+    google.script.run.withSuccessHandler(function () {
+      document.getElementById('disputeMsg').textContent = 'รับคำขอทบทวนแล้ว';
+    }).withFailureHandler(function (err) {
+      document.getElementById('disputeMsg').textContent = err.message;
+    }).submitDispute({
+      name: document.getElementById('dName').value,
+      email: document.getElementById('dEmail').value,
+      message: document.getElementById('dMsg').value
     });
   };
 
