@@ -640,10 +640,12 @@ var google = { script: { run: (function () {
   function boot() {
     google.script.run.withSuccessHandler(function (data) {
       DATA = data;
-      fill();
+      try { fill(); } catch (e) {
+        document.getElementById('statline').textContent = 'ข้อมูลมาแล้ว แต่แสดงบางส่วนไม่ได้: ' + e.message;
+      }
       show('home');
     }).withFailureHandler(function (err) {
-      document.getElementById('statline').textContent = 'โหลดข้อมูลไม่ได้: ' + err.message + ' — รัน setupSpreadsheet() ในชีตก่อน';
+      document.getElementById('statline').textContent = 'โหลดข้อมูลไม่ได้: ' + err.message;
     }).getBootstrap();
   }
 
@@ -930,7 +932,8 @@ var google = { script: { run: (function () {
   };
 
   
-  document.getElementById('orderForm').onsubmit = function (e) {
+  var orderForm = document.getElementById('orderForm');
+if (orderForm) orderForm.onsubmit = function (e) {
     e.preventDefault();
     google.script.run.withSuccessHandler(function (res) {
       document.getElementById('orderMsg').textContent = 'รับคำขอ ' + res.id + ' แล้ว จำนวน ' + res.amount + ' บาท ติดต่อยืนยันที่ ' + res.email;
@@ -944,7 +947,8 @@ var google = { script: { run: (function () {
       detail: document.getElementById('oDetail').value
     });
   };
-  document.getElementById('disputeForm').onsubmit = function (e) {
+  var disputeForm = document.getElementById('disputeForm');
+if (disputeForm) disputeForm.onsubmit = function (e) {
     e.preventDefault();
     google.script.run.withSuccessHandler(function () {
       document.getElementById('disputeMsg').textContent = 'รับคำขอทบทวนแล้ว';
