@@ -547,27 +547,26 @@
 <script>
 var google = { script: { run: (function () {
   var ok = function () {}, fail = function () {};
-  var chain = {
-    withSuccessHandler: function (fn) { ok = fn; return chain; },
-    withFailureHandler: function (fn) { fail = fn; return chain; }
-  };
-  return new Proxy(chain, {
+  var chain = {};
+  var proxy = new Proxy(chain, {
     get: function (target, prop) {
-      if (prop in target) return target[prop];
+      if (target[prop]) return target[prop];
       return function () {
         var args = Array.prototype.slice.call(arguments);
-        fetch("/api/" + prop, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ args: args }) })
+        fetch('/api/' + prop, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ args: args }) })
           .then(function (r) { return r.json(); })
           .then(function (res) {
-            if (!res.ok) fail({ message: res.error || "ส่งไม่สำเร็จ" });
+            if (!res.ok) fail({ message: res.error || 'ส่งไม่สำเร็จ' });
             else ok(res.data);
           })
           .catch(function (e) { fail({ message: e.message }); });
       };
     }
   });
-})() } };
-</script>
+  chain.withSuccessHandler = function (fn) { ok = fn; return proxy; };
+  chain.withFailureHandler = function (fn) { fail = fn; return proxy; };
+  return proxy;
+})() } };</script>
 <script>
 
   var DATA = null;
