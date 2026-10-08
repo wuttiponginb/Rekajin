@@ -35,6 +35,7 @@ def init():
     CREATE TABLE IF NOT EXISTS providers (id TEXT PRIMARY KEY, name TEXT, groups TEXT, zone TEXT, province TEXT, fairness_score REAL, review_count INTEGER, price_note TEXT, contact TEXT, status TEXT);
     CREATE TABLE IF NOT EXISTS reviews (id TEXT PRIMARY KEY, created_at TEXT, provider_id TEXT, score REAL, note TEXT, status TEXT);
     CREATE TABLE IF NOT EXISTS contacts (id TEXT PRIMARY KEY, created_at TEXT, name TEXT, email TEXT, message TEXT);
+    CREATE TABLE IF NOT EXISTS orders (id TEXT PRIMARY KEY, created_at TEXT, kind TEXT, name TEXT, email TEXT, phone TEXT, detail TEXT, amount INTEGER, status TEXT);
     """)
     if con.execute("SELECT COUNT(*) c FROM categories").fetchone()["c"] == 0 and SEED.exists():
         seed = json.loads(SEED.read_text())
@@ -69,12 +70,12 @@ def code():
 
 def judge(price, low, mid, high):
     if price < low * 0.75:
-        return {"label": "ต่ำกว่าช่วงมาก", "tone": "danger", "text": "ถูกผิดปกติ อาจคนละขอบเขตงาน ถามให้ชัดก่อนมัดจำ"}
+        return {"label": "ต่ำกว่าช่วงที่พบบ่อย", "tone": "warn", "text": "ต่ำกว่าช่วงที่พบได้บ่อย อาจเป็นคนละขอบเขตงาน ควรสอบรายการที่รวมและไม่รวมก่อนตัดสินใจ"}
     if price <= mid:
-        return {"label": "อยู่ในช่วงล่างถึงกลาง", "tone": "ok", "text": "ไม่สูงกว่าที่คนส่วนใหญ่ในช่วงนี้จ่าย"}
+        return {"label": "อยู่ในช่วงล่างถึงกลาง", "tone": "ok", "text": "อยู่ในช่วงที่พบได้บ่อยจากข้อมูลอ้างอิงชุดนี้"}
     if price <= high:
-        return {"label": "สูงกว่าค่ากลาง", "tone": "warn", "text": "สูงกว่าที่คนส่วนใหญ่จ่าย ลองถามว่าส่วนต่างอยู่รายการไหน"}
-    return {"label": "สูงกว่าช่วงบน", "tone": "hot", "text": "สูงกว่าช่วงที่พบได้บ่อย ยังไม่ได้แปลว่าโกง อาจเป็นวัสดุ คนละความสูง หรือมีประกันงาน"}
+        return {"label": "สูงกว่าค่ากลางของชุดข้อมูล", "tone": "warn", "text": "สูงกว่าค่ากลางของชุดข้อมูลนี้ อาจมีเหตุผลจากวัสดุ ขอบเขตงาน หรือการรับประกัน ควรสอบรายละเอียดกับผู้เสนอราคา"}
+    return {"label": "สูงกว่าช่วงบนของชุดข้อมูล", "tone": "warn", "text": "สูงกว่าช่วงบนของชุดข้อมูลนี้ ไม่ได้หมายความว่าราคาไม่เหมาะสม อาจเป็นงานยากกว่า วัสดุคนละเกรด หรือมีประกันงาน"}
 
 
 def save_photo(data_url, sid):
@@ -195,6 +196,39 @@ def submit_review(payload=None):
     return {"ok": True}
 
 
+def submit_order(payload=None):
+    p = payload or {}
+    kind = str(p.get("kind") or "")
+    prices = {"quote": 149, "listing": 990, "report": 2900}
+    if kind not in prices:
+        raise ValueError("ไม่พบแพ็กเกจนี้")
+    if not p.get("name") or "@" not in str(p.get("email") or "") or len(str(p.get("detail") or "")) < 8:
+        raise ValueError("กรอกชื่อ อีเมล และรายละเอียดให้ครบ")
+    oid = "O" + uuid.uuid4().hex[:8]
+    con = db()
+    con.execute("INSERT INTO orders VALUES (?,?,?,?,?,?,?,?,?)", (
+        oid, datetime.now().isoformat(timespec="seconds"), kind, str(p.get("name"))[:80], str(p.get("email"))[:80],
+        str(p.get("phone") or "")[:30], str(p.get("detail"))[:800], prices[kind], "new"
+    ))
+    con.commit()
+    con.close()
+    return {"ok": True, "id": oid, "amount": prices[kind], "email": ADMIN_EMAIL}
+
+
+def submit_dispute(payload=None):
+    p = payload or {}
+    if not p.get("name") or "@" not in str(p.get("email") or "") or len(str(p.get("message") or "")) < 12:
+        raise ValueError("กรอกชื่อ อีเมล และเหตุผลที่ขอทบทวนให้ครบ")
+    con = db()
+    con.execute("INSERT INTO contacts VALUES (?,?,?,?,?)", (
+        "D" + uuid.uuid4().hex[:8], datetime.now().isoformat(timespec="seconds"),
+        "ทบทวน: " + str(p.get("name"))[:60], p.get("email"), str(p.get("message"))[:800]
+    ))
+    con.commit()
+    con.close()
+    return {"ok": True}
+
+
 def submit_contact(payload=None):
     p = payload or {}
     if not p.get("name") or not p.get("message") or "@" not in str(p.get("email") or ""):
@@ -278,6 +312,8 @@ HANDLERS = {
     "checkQuote": check_quote,
     "submitReview": submit_review,
     "submitContact": submit_contact,
+    "submitOrder": submit_order,
+    "submitDispute": submit_dispute,
     "adminLogin": admin_login,
     "adminPending": admin_pending,
     "adminSetStatus": admin_set_status,
